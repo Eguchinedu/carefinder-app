@@ -1,0 +1,38 @@
+.footer-container{
+    margin: 30px 0;
+}
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.logo {
+    margin-right: 25px;
+}
+.nav-item{
+    text-decoration: none;
+}
+.brand-name {
+    flex-grow: 1;
+}
+.brand-name{
+    font-size: 28px;
+    font-weight: 500;
+    line-height: 38px;
+}
+.footer-btn {
+    border: none;
+    padding: 5px 25px;
+    border-radius: 5px;
+    background-color: transparent;
+    color: var(--bg-color);
+    margin: 0 5px;
+}
+.footer-btn.active{
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+.footer-copy {
+    text-align: center;
+    margin-top: 30px;
+}

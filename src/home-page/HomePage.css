@@ -1,0 +1,43 @@
+.hero-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  margin: 40px 0;
+}
+.col {
+  flex-basis: 50%;
+  min-width: 300px;
+}
+
+.hero-img {
+  max-width: 100%;
+}
+.col-img {
+    text-align: center;
+}
+.col-span {
+  color: var(--text-color2);
+}
+.col h1 {
+  font-size: 50px;
+  line-height: 53px;
+  margin: 25px 0;
+  color: var(--text-color-1);
+  font-weight: 600;
+}
+.col p {
+      color: var(--text-color);
+      font-size: 21px;
+      line-height: 30px;
+}
+.form-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 40px 0;
+}
+
+@media only screen and (max-width: 600px) {
+
+}
