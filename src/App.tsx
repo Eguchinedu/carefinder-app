@@ -1,5 +1,3 @@
-import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import PageNotFound from './components/page-not-found/PageNotFound';
@@ -11,6 +9,11 @@ import Footer from './components/footer/Footer';
 import HomePage from './home-page/HomePage';
 import LoginPage from './login-components/login-page/LoginPage';
 import NavBar from './components/nav-bar/Navbar';
+import { initializeApp } from 'firebase/app';
+import { firebaseConfig } from './config/config';
+
+
+initializeApp(firebaseConfig)
 
 function App() {
   
@@ -28,7 +31,6 @@ function App() {
           <Route path="*" element={<PageNotFound/>}/>
         </Routes>
         <div className="footer-bg">
-
         <Footer/>
         </div>
         </Router>

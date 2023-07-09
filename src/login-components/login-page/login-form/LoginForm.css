@@ -42,7 +42,6 @@
 .error-span {
     position: relative;
     padding: 0 5px;
-    display: none;
 }
 .error-show {
     position: relative;
@@ -119,6 +118,5 @@ label {
 .error-message {
     color: red;
     font-size: 14px;
-    text-align: center;
-    margin-top: 20px ;
+    margin-bottom: 10px;
 }
