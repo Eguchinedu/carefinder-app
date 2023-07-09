@@ -1,6 +1,6 @@
 import { Container } from "react-bootstrap";
 import { useForm } from "react-hook-form";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { AuthForm, signUpSchema } from "../../../components/types/form";
 import { setDoc, doc } from "firebase/firestore";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -25,7 +25,7 @@ const SignUpForm = () => {
   const [changeType2, setChangeType2] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMessages, setErrorMessages] = useState<string | null>(null);
-
+const navigate = useNavigate();
 const dispatch = useAppDispatch()
 
   const viewPass = () => {
@@ -53,6 +53,7 @@ console.log(user)
       if (user && user.email) {
         dispatch(login({email: user.email, id: user.uid}))
       }
+      navigate("/login");
     } catch (error: any) {
       setLoading(false);
       console.log(error);

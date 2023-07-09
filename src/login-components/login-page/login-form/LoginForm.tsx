@@ -1,6 +1,6 @@
 import { Container } from "react-bootstrap";
 import './LoginForm.css'
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { AuthForm, LogInForm, logInSchema} from "../../../components/types/form";
 import {signInWithEmailAndPassword} from "firebase/auth"
@@ -23,6 +23,8 @@ const LoginForm = () => {
   const [loading, setLoading] = useState(false);
   const [errorMessages, setErrorMessages] = useState<string | null>(null);
   const dispatch = useAppDispatch();
+const navigate = useNavigate();
+
 
     const viewPass = () => {
       setVisible(!visible);
@@ -37,6 +39,8 @@ const LoginForm = () => {
        if (user && user.email) {
          dispatch(login({ email: user.email, id: user.uid }));
        }
+      navigate("/");
+
        } catch (error: any) {
          console.log(error);
        }

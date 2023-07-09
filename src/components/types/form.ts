@@ -13,6 +13,9 @@ export const logInSchema = yup.object().shape({
     email: yup.string().email("Please Provide a valid email address").required("Email Address is Required"),
     password: yup.string().min(6, "Password should have a min-length of 6").required("Password is Required"),
 });
+export const resetSchema = yup.object().shape({
+    email: yup.string().email("Please Provide a valid email address").required("Email Address is Required")
+});
 
 export interface AuthForm {
     email: string;
@@ -23,4 +26,8 @@ export interface AuthForm {
 export interface LogInForm {
     email: string;
     password: string;
+}
+
+export interface ResetForm {
+    email: string;
 }
