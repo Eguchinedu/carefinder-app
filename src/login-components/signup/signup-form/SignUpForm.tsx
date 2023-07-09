@@ -2,8 +2,13 @@ import { Container } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { NavLink } from "react-router-dom";
 import { AuthForm, signUpSchema } from "../../../components/types/form";
+import { setDoc, doc } from "firebase/firestore";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useState } from "react";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth, db } from "../../../config/config";
+import { useAppDispatch } from "../../../components/hooks/storeHooks";
+import { login } from "../../../components/Auth/authSlice";
 
 const SignUpForm = () => {
   const {
@@ -15,16 +20,45 @@ const SignUpForm = () => {
   });
 
   const [visible, setVisible] = useState(false);
+  const [visible2, setVisible2] = useState(false);
   const [changeType, setChangeType] = useState(false);
+  const [changeType2, setChangeType2] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errorMessages, setErrorMessages] = useState<string | null>(null);
+
+const dispatch = useAppDispatch()
 
   const viewPass = () => {
     setVisible(!visible);
     setChangeType(!changeType);
-  }
+  };
+  const viewPass2 = () => {
+    setVisible2(!visible2);
+    setChangeType2(!changeType2);
+  };
 
-  console.log(errors.firstName?.message);
-  const handleFormSubmit = (data: AuthForm) => {
-    console.log(data);
+  const handleFormSubmit = async (data: AuthForm) => {
+    try {
+      setLoading(true);
+      const { user } = await createUserWithEmailAndPassword(
+        auth,
+        data.email,
+        data.password
+      );
+console.log(user)
+      await setDoc(doc(db, "users", user.uid),{
+        email : data.email,
+      });
+      setLoading(false);
+      if (user && user.email) {
+        dispatch(login({email: user.email, id: user.uid}))
+      }
+    } catch (error: any) {
+      setLoading(false);
+      console.log(error);
+      const errorCode = error.code;
+      setErrorMessages(errorCode)
+    }
   };
   return (
     <>
@@ -34,57 +68,6 @@ const SignUpForm = () => {
           <p>Welcome New User! Please enter your details</p>
         </div>
         <form onSubmit={handleSubmit(handleFormSubmit)} action="">
-          <div className="login-form-group">
-            <label htmlFor="firstname">Firstname</label>
-            <div className="error-field">
-              <input
-                type="text"
-                id="firstname"
-                className="login-form-field"
-                placeholder="Enter your Firstname"
-                {...register("firstName")}
-              />
-              {errors.firstName ? (
-                <span className="error-show">
-                  <i className="bi bi-x-circle"></i>
-                </span>
-              ) : (
-                <></>
-              )}
-            </div>
-            {errors.confirmPassword ? (
-              <span className="error-message">
-                {errors.firstName?.message}
-              </span>
-            ) : (
-              <></>
-            )}
-          </div>
-          <div className="login-form-group">
-            <label htmlFor="lastname">Lastname</label>
-            <div className="error-field">
-              <input
-                type="text"
-                id="lastname"
-                className="login-form-field"
-                placeholder="Enter your Lastname"
-                {...register("lastName")}
-              />
-              {errors.lastName ? (
-                <span className="error-show">
-                  <i className="bi bi-x-circle"></i>
-                </span>
-              ) : (
-                <></>
-              )}
-            </div>
-            {errors.confirmPassword ? (
-              <span className="error-message">{errors.lastName?.message}</span>
-            ) : (
-              <></>
-            )}
-          </div>
-
           <div className="login-form-group">
             <label htmlFor="email">Email</label>
             <div className="error-field">
@@ -103,7 +86,7 @@ const SignUpForm = () => {
                 <></>
               )}
             </div>
-            {errors.confirmPassword ? (
+            {errors.email ? (
               <span className="error-message">{errors.email?.message}</span>
             ) : (
               <></>
@@ -132,7 +115,7 @@ const SignUpForm = () => {
                 )}
               </div>
             </div>
-            {errors.confirmPassword ? (
+            {errors.password ? (
               <span className="error-message">{errors.password?.message}</span>
             ) : (
               <></>
@@ -143,14 +126,14 @@ const SignUpForm = () => {
             <div className="password-span">
               <div className="error-field">
                 <input
-                  type={changeType ? "text" : "password"}
+                  type={changeType2 ? "text" : "password"}
                   id="confirmPassword"
                   placeholder="Confirm your password"
                   className="login-form-field"
                   {...register("confirmPassword")}
                 />
-                <span className="icon-span" onClick={viewPass}>
-                  <i className={visible ? "bi bi-eye" : "bi bi-eye-slash"}></i>
+                <span className="icon-span" onClick={viewPass2}>
+                  <i className={visible2 ? "bi bi-eye" : "bi bi-eye-slash"}></i>
                 </span>
                 {errors.confirmPassword ? (
                   <span className="error-show">
@@ -174,8 +157,9 @@ const SignUpForm = () => {
               Already a user? <NavLink to="/login">Log In</NavLink>
             </p>
           </div>
+          {errorMessages && <span className="error-message">{errorMessages}</span>}
           <div className="login-form-button">
-            <button className="log-form-btn">Sign up</button>
+            <button disabled={loading} className="log-form-btn">Sign up</button>
           </div>
         </form>
       </Container>

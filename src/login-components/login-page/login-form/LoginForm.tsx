@@ -2,10 +2,45 @@ import { Container } from "react-bootstrap";
 import './LoginForm.css'
 import { NavLink } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { AuthForm} from "../../../components/types/form";
+import { AuthForm, LogInForm, logInSchema} from "../../../components/types/form";
+import {signInWithEmailAndPassword} from "firebase/auth"
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useState } from "react";
+import { auth } from "../../../config/config";
+import { useAppDispatch } from "../../../components/hooks/storeHooks";
+import { login } from "../../../components/Auth/authSlice";
 
 const LoginForm = () => {
+   const {
+     register,
+     handleSubmit,
+     formState: { errors },
+   } = useForm<LogInForm>({
+     resolver: yupResolver(logInSchema),
+   });
+  const [visible, setVisible] = useState(false);
+  const [changeType, setChangeType] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errorMessages, setErrorMessages] = useState<string | null>(null);
+  const dispatch = useAppDispatch();
 
+    const viewPass = () => {
+      setVisible(!visible);
+      setChangeType(!changeType);
+    };
+     const handleFormSubmit = async (data: LogInForm) => {
+      const { email, password } = data;
+      setLoading(true);
+       try {
+       const {user} = await signInWithEmailAndPassword(auth, email, password);
+       setVisible(false);
+       if (user && user.email) {
+         dispatch(login({ email: user.email, id: user.uid }));
+       }
+       } catch (error: any) {
+         console.log(error);
+       }
+     };
 
   return (
     <>
@@ -14,41 +49,60 @@ const LoginForm = () => {
           <h2>Log in</h2>
           <p>Welcome back! Please enter your details</p>
         </div>
-        <form action="">
+        <form onSubmit={handleSubmit(handleFormSubmit)} action="">
           <div className="login-form-group">
             <label htmlFor="email">Email</label>
             <div className="error-field">
               <input
                 type="email"
-                name="email"
                 id="email"
                 className="login-form-field"
                 placeholder="Enter your email"
-                required
+                {...register("email")}
               />
-              {/* <span [className]="form.submitted && emailField.invalid ? 'error-show' : 'error-span'"><i className="bi bi-x-circle"></i></span> */}
+              {errors.email ? (
+                <span className="error-show">
+                  <i className="bi bi-x-circle"></i>
+                </span>
+              ) : (
+                <></>
+              )}
             </div>
+            {errors.email ? (
+              <span className="error-message">{errors.email?.message}</span>
+            ) : (
+              <></>
+            )}
           </div>
           <div className="login-form-group">
             <label htmlFor="password">Password</label>
             <div className="password-span">
               <div className="error-field">
                 <input
-                  type="password'"
-                  name="password"
+                  type={changeType ? "text" : "password"}
                   id="password"
                   placeholder="Enter your password"
                   className="login-form-field"
-                  required
+                  {...register("password")}
                 />
-                {/* <span className="icon-span" (click)="viewPass()"><i [ngclassName]="visible ? 'bi bi-eye' : 'bi bi-eye-slash'"></i></span>
-                        <span [className]="form.submitted && passwordField.invalid ? 'error-show' : 'error-span'"><i className="bi bi-x-circle"></i></span> */}
+                <span className="icon-span" onClick={viewPass}>
+                  <i className={visible ? "bi bi-eye" : "bi bi-eye-slash"}></i>
+                </span>
+                {errors.password ? (
+                  <span className="error-show">
+                    <i className="bi bi-x-circle"></i>
+                  </span>
+                ) : (
+                  <></>
+                )}
               </div>
             </div>
+            {errors.password ? (
+              <span className="error-message">{errors.password?.message}</span>
+            ) : (
+              <></>
+            )}
           </div>
-          {/* <div className="match-error">
-            <p *ngIf="emailField.errors?.['email']" className="alert alert-danger">Please type in a valid email</p>
-        </div> */}
           <div className="login-form-section">
             <div className="forgotpwd">
               <p>
@@ -61,7 +115,9 @@ const LoginForm = () => {
               </NavLink>
             </div>
           </div>
-
+          {errorMessages && (
+            <span className="error-message">{errorMessages}</span>
+          )}
           <div className="login-form-button">
             <button className="log-form-btn">Log in</button>
           </div>

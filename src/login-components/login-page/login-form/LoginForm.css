@@ -120,3 +120,10 @@ label {
     font-size: 14px;
     margin-bottom: 10px;
 }
+.log-form-btn:disabled {
+      background:  #fff;
+      border: 2px solid #D0D5DD;
+   color: #ccc;
+   cursor: no-drop;
+
+}
