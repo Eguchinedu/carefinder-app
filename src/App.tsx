@@ -26,7 +26,6 @@ function App() {
           <Route path="/signup" element={<SignUp/>}/>
           <Route path='/login'element={<LoginPage/>}/>
           <Route path='/forgotpwd'element={<ForgotPwd/>}/>
-          {/* <Route path='/forgotpwd/reset'element={<ResetPwd/>}/> */}
           <Route path="/hospital-list" element={<HospitalList/>}/>
           <Route path="*" element={<PageNotFound/>}/>
         </Routes>

@@ -5,9 +5,9 @@ import { useForm } from "react-hook-form";
 import { AuthForm, LogInForm, logInSchema} from "../../../components/types/form";
 import {signInWithEmailAndPassword} from "firebase/auth"
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { auth } from "../../../config/config";
-import { useAppDispatch } from "../../../components/hooks/storeHooks";
+import { useAppDispatch, useAppSelector } from "../../../components/hooks/storeHooks";
 import { login } from "../../../components/Auth/authSlice";
 
 const LoginForm = () => {
@@ -22,8 +22,16 @@ const LoginForm = () => {
   const [changeType, setChangeType] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMessages, setErrorMessages] = useState<string | null>(null);
+  const {user} = useAppSelector(state => state.auth)
   const dispatch = useAppDispatch();
 const navigate = useNavigate();
+
+useEffect(() => {
+  if (Boolean(user)) {
+    navigate("/");
+  }
+
+}, [user, navigate])
 
 
     const viewPass = () => {
@@ -39,7 +47,6 @@ const navigate = useNavigate();
        if (user && user.email) {
          dispatch(login({ email: user.email, id: user.uid }));
        }
-      navigate("/");
 
        } catch (error: any) {
          console.log(error);
